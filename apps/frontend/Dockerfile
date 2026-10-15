@@ -1,5 +1,5 @@
 
-FROM node:22-alpine AS base
+FROM node:22-bookworm AS base
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ WORKDIR /app
 FROM base AS development
 
 COPY package.json package-lock.json ./
-
+RUN npx playwright install --with-deps chromium
 RUN npm ci
 
 COPY . .
