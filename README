@@ -44,7 +44,7 @@ Configure the frontend API URL using `VITE_API_BASE_URL`. It must point to the b
 Example:
 
 ```env
-VITE_API_BASE_URL=http://localhost:<backend-port>
+VITE_API_BASE_URL=http://localhost:8000
 ```
 
 Replace the placeholder with the actual backend port configured in Docker Compose.
