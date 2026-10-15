@@ -6,8 +6,12 @@ services:
       target: development
     ports:
       - "8000:8000"
+    volumes:
+      - ./apps/backend:/app
+      - backend_venv:/app/.venv
     environment:
       DATABASE_URL: postgresql+psycopg://customer_user:${POSTGRES_PASSWORD}@db:5432/customer_db
+      TEST_DATABASE_URL: postgresql+psycopg://test_user:${TEST_POSTGRES_PASSWORD:?TEST_POSTGRES_PASSWORD must be set}@test-db:5432/customer_test_db
     depends_on:
       db:
         condition: service_healthy
@@ -40,5 +44,22 @@ services:
       timeout: 3s
       retries: 10
 
+  test-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: customer_test_db
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: ${TEST_POSTGRES_PASSWORD:?TEST_POSTGRES_PASSWORD must be set}
+    ports:
+      - "5433:5432"
+    volumes:
+      - test_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d customer_test_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 volumes:
   postgres_data:
+  backend_venv:
+  test_postgres_data:
